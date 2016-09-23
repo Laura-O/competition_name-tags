@@ -1,0 +1,93 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{datatool}
+\usepackage[freepin,crossmark]{ticket}
+% To put a box around the nametags use:
+%\usepackage[freepin,crossmark,boxed]{ticket}
+\usepackage{fontspec}
+\usepackage{xparse}
+\setlength{\unitlength}{1mm}
+
+% 3 rows and 3 columns on each page
+\ticketNumbers{3}{3}
+% size of each tag
+\ticketSize{56}{85}
+% size between the tags
+\ticketDistance{4}{4}
+
+\renewcommand*{\ticketdefault}{
+}
+
+\newcommand*{\front}[3]{%
+  \ticket
+  {
+  	\put(12,50){\includegraphics[width=30mm]{logo.png}}
+    \put(3,25){\resizebox{50mm}{!}{\bfseries #1}}
+    \put(28,15){\makebox[0mm]{\bfseries\Large #2}}
+    \put(28,5){\makebox[0mm]{\scshape\Large #3}}
+  }
+}
+
+\NewDocumentCommand\back{>{\SplitList{;}}m}{%
+	\ticket
+	{
+		\put(12,60){
+			\parbox[b][4em][t]{0.33\textwidth}{
+				\ProcessList{#1}{ \insertitem}
+			}
+
+    	}
+    }
+}
+
+\newcommand\insertitem[1]{#1 \\}
+
+\begin{document}
+\sffamily
+
+% Read data for frontside
+\DTLloaddb{list}{example.csv}
+\DTLforeach{list}{\first=first,\last=last,\info=info}{\front{\first}{\last}{\info}}
+
+% Read data for backside
+\backside%
+\oddsidemargin=30mm
+\DTLloaddb{groups}{example.csv}
+% Loop through the lines of the csv file and extract the numbers of the groups.
+\DTLforeach{groups}{
+	\two=2x2x2,
+	\rubiks=3x3x3,
+	\blind=3x3 Blind,
+	\oh=3x3x3 OH,
+	\four=4x4x4,
+	\five=5x5x5,
+	\six=6x6x6,
+	\seven=7x7x7,
+	\pyra=Pyraminx,
+	\mega=Megaminx,
+	\clock=Clock,
+	\sq=Square-1,
+	\skewb=Skewb,
+	\feet=Feet}
+	{\back{
+		2x2x2: \two;
+		3x3x3: \rubiks;
+		4x4x4: \four;
+		5x5x5: \five;
+		6x6x6: \six;
+		7x7x7: \seven;
+		One-Handed: \oh;
+    	3x3x3 blindfolded:\blind;
+		Pyraminx: \pyra;
+		Skewb: \skewb;
+		Rubik's Clock: \clock;
+		Square-1: \sq;
+		Megaminx: \mega;
+		Feet: \feet;
+		}
+	}
+
+
+\end{document}
